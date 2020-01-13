@@ -38,7 +38,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
-	github.com/openshift/api v3.9.0+incompatible
+	github.com/openshift/api release-3.9
 	github.com/operator-framework/operator-sdk v0.8.0
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
