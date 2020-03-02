@@ -30,7 +30,7 @@ require (
 	github.com/knative/eventing v0.4.0
 	github.com/knative/pkg v0.0.0-20190214162945-0183bf9cdc73
 	github.com/knative/serving v0.4.0
-	github.com/magiconair/properties v1.8.0
+	github.com/magiconair/properties v1.8.0 // indirect
 	github.com/mailru/easyjson v0.0.0-20190221075403-6243d8e04c3f // indirect
 	github.com/markbates/inflect v1.0.4 // indirect
 	github.com/mattbaird/jsonpatch v0.0.0-20171005235357-81af80346b1a // indirect
@@ -38,7 +38,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
-	github.com/openshift/api release-3.9
+	github.com/openshift/api v0.0.0-20180801171038-322a19404e37
 	github.com/operator-framework/operator-sdk v0.8.0
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -71,3 +71,5 @@ require (
 	sigs.k8s.io/testing_frameworks v0.1.1 // indirect
 	sigs.k8s.io/yaml v1.1.0 // indirect
 )
+
+go 1.13
