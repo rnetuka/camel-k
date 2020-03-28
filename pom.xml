@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2011 Red Hat, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>
+
+  <groupId>org.fuse.camel.k</groupId>
+  <artifactId>camel-k-parent</artifactId>
+  <version>1.0.0.fuse-jdk11-800030</version>
+  <packaging>pom</packaging>
+
+  <name>Fuse :: Camel-K Parent</name>
+
+  <url>https://camel.apache.org/camel-k/latest/index.html</url>
+  <inceptionYear>2011</inceptionYear>
+
+  <organization>
+    <name>Red Hat</name>
+    <url>http://redhat.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+      <connection>scm:git:git@github.com:apache/camel-k.git</connection>
+      <developerConnection>scm:git:git@github.com:apache/camel-k.git</developerConnection>
+      <url>http://github.com/apache/camel-k/</url>
+      <tag>fuse-camel-k-1.0</tag>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>oss-sonatype-staging</id>
+      <name>Sonatype Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>oss-sonatype-snapshots</id>
+      <name>OSS Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <camel.version>3.1.0.fuse-jdk11-800007</camel.version>
+    <camel-quarkus.version>1.1.0.fuse-jdk11-800025</camel-quarkus.version>
+    <camel-k.version>1.0.0.fuse-jdk11-800017</camel-k.version>
+    <cxf.version>3.3.6.fuse-jdk11-800015</cxf.version>
+    <camel-k-runtime.version>1.2.0</camel-k-runtime.version>
+
+    <deploy-plugin.version>2.8.2</deploy-plugin.version>
+    <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+  </properties>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel</artifactId>
+        <version>${camel.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-parent</artifactId>
+        <version>${camel-quarkus.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf</artifactId>
+        <version>${cxf.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.k</groupId>
+        <artifactId>camel-k-runtime-parent</artifactId>
+        <version>${camel-k-runtime.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${deploy-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-build.sh</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+            <executable>${basedir}/build-image.sh</executable>
+            <commandlineArgs>-v 1.0 -t camel-k-${camel-k.version} -c ${camel.version} -r ${camel-k-runtime.version} -q ${camel-quarkus.version}</commandlineArgs>
+        </configuration>
+      </plugin>
+    -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>deploy-linux</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <file>${basedir}/camel-k/camel-k-client-1.0-linux-64bit.tar.gz</file>
+              <groupId>org.fuse.camel.k</groupId>
+              <artifactId>linux-client</artifactId>
+              <version>${project.version}</version>
+            </configuration>
+          </execution>
+          <execution>
+            <id>deploy-macosx</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <file>${basedir}/camel-k/camel-k-client-1.0-mac-64bit.tar.gz</file>
+              <groupId>org.fuse.camel.k</groupId>
+              <artifactId>linux-client</artifactId>
+              <version>${project.version}</version>
+            </configuration>
+          </execution>  
+          <execution>
+            <id>deploy-windows</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <file>${basedir}/camel-k/camel-k-client-1.0-windows-64bit.tar.gz</file>
+              <groupId>org.fuse.camel.k</groupId>
+              <artifactId>linux-client</artifactId>
+              <version>${project.version}</version>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
