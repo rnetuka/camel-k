@@ -33,6 +33,7 @@ type Artifact struct {
 	ID       string `json:"id" yaml:"id"`
 	Location string `json:"location,omitempty" yaml:"location,omitempty"`
 	Target   string `json:"target,omitempty" yaml:"target,omitempty"`
+	Checksum string `json:"checksum,omitempty" yaml:"checksum,omitempty"`
 }
 
 // Failure --
@@ -112,8 +113,8 @@ const (
 	CapabilityHealth = "health"
 	// CapabilityCron --
 	CapabilityCron = "cron"
-	// CapabilityPlatformHttp --
-	CapabilityPlatformHttp = "platform-http"
+	// CapabilityPlatformHTTP --
+	CapabilityPlatformHTTP = "platform-http"
 )
 
 // ResourceCondition is a common type for all conditions
