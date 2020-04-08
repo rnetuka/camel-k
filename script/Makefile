@@ -47,7 +47,7 @@ PACKAGE_ARTIFACTS_STRATEGY := copy
 
 # Build
 GOLDFLAGS += -X github.com/apache/camel-k/pkg/cmd/operator.GitCommit=$(GIT_COMMIT)
-GOFLAGS = -ldflags "$(GOLDFLAGS)" -trimpath
+GOFLAGS = -mod=vendor -ldflags "$(GOLDFLAGS)" -trimpath
 
 define LICENSE_HEADER
 Licensed to the Apache Software Foundation (ASF) under one or more
