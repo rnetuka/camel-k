@@ -216,7 +216,7 @@
                 <goal>deploy-file</goal>
               </goals>
               <configuration>
-                <file>${basedir}/camel-k-client-1.0-linux-64bit.tar.gz</file>
+                <file>${basedir}/camel-k-client-1.1-linux-64bit.tar.gz</file>
                 <packaging>tar.gz</packaging>
                 <groupId>org.fuse.camel.k</groupId>
                 <artifactId>linux-client</artifactId>
@@ -230,7 +230,7 @@
                 <goal>deploy-file</goal>
               </goals>
               <configuration>
-                <file>${basedir}/camel-k-client-1.0-mac-64bit.tar.gz</file>
+                <file>${basedir}/camel-k-client-1.1-mac-64bit.tar.gz</file>
                 <packaging>tar.gz</packaging>
                 <groupId>org.fuse.camel.k</groupId>
                 <artifactId>mac-client</artifactId>
@@ -244,7 +244,7 @@
                 <goal>deploy-file</goal>
               </goals>
               <configuration>
-                <file>${basedir}/camel-k-client-1.0-windows-64bit.tar.gz</file>
+                <file>${basedir}/camel-k-client-1.1-windows-64bit.tar.gz</file>
                 <packaging>tar.gz</packaging>
                 <groupId>org.fuse.camel.k</groupId>
                 <artifactId>windows-client</artifactId>
