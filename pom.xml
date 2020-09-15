@@ -27,7 +27,7 @@
 
   <groupId>org.fuse.camel.k</groupId>
   <artifactId>camel-k-parent</artifactId>
-  <version>1.1.0.fuse-jdk11-800042-redhat-00002</version>
+  <version>1.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Fuse :: Camel-K Parent</name>
