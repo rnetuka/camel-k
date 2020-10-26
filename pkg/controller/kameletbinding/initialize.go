@@ -19,17 +19,13 @@ package kameletbinding
 
 import (
 	"context"
-	"encoding/json"
 	"strings"
 
-	v1 "github.com/apache/camel-k/pkg/apis/camel/v1"
 	"github.com/apache/camel-k/pkg/apis/camel/v1alpha1"
-	"github.com/apache/camel-k/pkg/util/bindings"
 	"github.com/apache/camel-k/pkg/util/kubernetes"
 	"github.com/apache/camel-k/pkg/util/patch"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -52,73 +48,12 @@ func (action *initializeAction) CanHandle(kameletbinding *v1alpha1.KameletBindin
 }
 
 func (action *initializeAction) Handle(ctx context.Context, kameletbinding *v1alpha1.KameletBinding) (*v1alpha1.KameletBinding, error) {
-	controller := true
-	blockOwnerDeletion := true
-	it := v1.Integration{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: kameletbinding.Namespace,
-			Name:      kameletbinding.Name,
-			OwnerReferences: []metav1.OwnerReference{
-				{
-					APIVersion:         kameletbinding.APIVersion,
-					Kind:               kameletbinding.Kind,
-					Name:               kameletbinding.Name,
-					UID:                kameletbinding.UID,
-					Controller:         &controller,
-					BlockOwnerDeletion: &blockOwnerDeletion,
-				},
-			},
-		},
-	}
-	// start from the integration spec defined in the binding
-	if kameletbinding.Spec.Integration != nil {
-		it.Spec = *kameletbinding.Spec.Integration.DeepCopy()
-	}
-
-	bindingContext := bindings.BindingContext{
-		Ctx:       ctx,
-		Client:    action.client,
-		Namespace: it.Namespace,
-	}
-
-	from, err := bindings.Translate(bindingContext, v1alpha1.EndpointTypeSource, kameletbinding.Spec.Source)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not determine source URI")
-	}
-	to, err := bindings.Translate(bindingContext, v1alpha1.EndpointTypeSink, kameletbinding.Spec.Sink)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not determine sink URI")
-	}
-
-	if len(from.Traits) > 0 || len(to.Traits) > 0 {
-		if it.Spec.Traits == nil {
-			it.Spec.Traits = make(map[string]v1.TraitSpec)
-		}
-		for k, v := range from.Traits {
-			it.Spec.Traits[k] = v
-		}
-		for k, v := range to.Traits {
-			it.Spec.Traits[k] = v
-		}
-	}
-
-	flow := map[string]interface{}{
-		"from": map[string]interface{}{
-			"uri": from.URI,
-			"steps": []map[string]interface{}{
-				{
-					"to": to.URI,
-				},
-			},
-		},
-	}
-	encodedFlow, err := json.Marshal(flow)
+	it, err := createIntegrationFor(ctx, action.client, kameletbinding)
 	if err != nil {
 		return nil, err
 	}
-	it.Spec.Flows = append(it.Spec.Flows, v1.Flow{RawMessage: encodedFlow})
 
-	if err := kubernetes.ReplaceResource(ctx, action.client, &it); err != nil {
+	if err := kubernetes.ReplaceResource(ctx, action.client, it); err != nil {
 		return nil, errors.Wrap(err, "could not create integration for kamelet binding")
 	}
 
