@@ -282,6 +282,14 @@ get-version:
 
 .PHONY: build build-kamel build-resources build-olm unsnapshot-olm dep codegen images images-dev images-push images-push-staging test check test-integration clean release cross-compile package-examples set-version git-tag release-notes check-licenses generate-deepcopy generate-client generate-doc build-resources release-helm release-staging release-nightly get-staging-repo get-version build-submodules set-module-version bundle-kamelets generate-strimzi
 
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/cmd.VersionVariant=RedHat
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/install.KamelCLIDownloadURLTemplate=https://mirror.openshift.com/pub/openshift-v4/clients/camel-k/%s/camel-k-client-%s-%s-64bit.tar.gz
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultOperatorName=red-hat-camel-k-operator
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultPackage=red-hat-camel-k
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultChannel=techpreview
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultSource=redhat-operators
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/maven.DefaultMavenRepositories=https://maven.repository.redhat.com/ga@id=redhat.ga,https://repository.jboss.org/nexus/content/groups/ea@id=jboss.ea,https://repo.maven.apache.org/maven2@id=central
+
 # find or download controller-gen
 # download controller-gen if necessary
 controller-gen:
