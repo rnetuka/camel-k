@@ -23,7 +23,7 @@ package defaults
 
 const (
 	// Version --
-	Version = "1.3.0"
+	Version = "1.3.1-SNAPSHOT"
 
 	// DefaultRuntimeVersion --
 	DefaultRuntimeVersion = "1.6.0"
@@ -34,8 +34,8 @@ const (
 	// KanikoVersion --
 	KanikoVersion = "0.17.1"
 
-	// BaseImage --
-	BaseImage = "adoptopenjdk/openjdk11:slim"
+	// baseImage --
+	baseImage = "adoptopenjdk/openjdk11:slim"
 
 	// LocalRepository --
 	LocalRepository = "/tmp/artifacts/m2"

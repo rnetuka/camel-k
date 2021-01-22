@@ -15,33 +15,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package camel
+package defaults
 
 import (
-	"context"
+	"os"
+	"testing"
 
-	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
-
-	v1 "github.com/apache/camel-k/pkg/apis/camel/v1"
-	"github.com/apache/camel-k/pkg/client"
+	"github.com/stretchr/testify/assert"
 )
 
-// LoadCatalog --
-func LoadCatalog(ctx context.Context, client client.Client, namespace string, runtime v1.RuntimeSpec) (*RuntimeCatalog, error) {
-	options := []k8sclient.ListOption{
-		k8sclient.InNamespace(namespace),
-	}
+func TestDefaultBaseImage(t *testing.T) {
+	assert.NotEmpty(t, BaseImage())
+}
 
-	list := v1.NewCamelCatalogList()
-	err := client.List(ctx, &list, options...)
-	if err != nil {
-		return nil, err
-	}
-
-	catalog, err := findBestMatch(list.Items, runtime)
-	if err != nil {
-		return nil, err
-	}
-
-	return catalog, nil
+func TestOverriddenBaseImage(t *testing.T) {
+	env := "RELATED_IMAGE_BASE"
+	oldEnvVal := os.Getenv(env)
+	overriddenImage := "xxx"
+	assert.NoError(t, os.Setenv(env, overriddenImage))
+	assert.Equal(t, overriddenImage, BaseImage())
+	assert.NoError(t, os.Setenv(env, oldEnvVal))
 }

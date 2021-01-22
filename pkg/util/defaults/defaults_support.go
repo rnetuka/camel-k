@@ -15,33 +15,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package camel
+package defaults
 
-import (
-	"context"
+import "os"
 
-	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
+var baseImageOverrideEnvs = []string{"BASE_IMAGE", "RELATED_IMAGE_BASE"}
 
-	v1 "github.com/apache/camel-k/pkg/apis/camel/v1"
-	"github.com/apache/camel-k/pkg/client"
-)
+func BaseImage() string {
+	return envOrDefault(baseImage, baseImageOverrideEnvs...)
+}
 
-// LoadCatalog --
-func LoadCatalog(ctx context.Context, client client.Client, namespace string, runtime v1.RuntimeSpec) (*RuntimeCatalog, error) {
-	options := []k8sclient.ListOption{
-		k8sclient.InNamespace(namespace),
+func envOrDefault(def string, envs ...string) string {
+	for i := range envs {
+		if val := os.Getenv(envs[i]); val != "" {
+			return val
+		}
 	}
-
-	list := v1.NewCamelCatalogList()
-	err := client.List(ctx, &list, options...)
-	if err != nil {
-		return nil, err
-	}
-
-	catalog, err := findBestMatch(list.Items, runtime)
-	if err != nil {
-		return nil, err
-	}
-
-	return catalog, nil
+	return def
 }
