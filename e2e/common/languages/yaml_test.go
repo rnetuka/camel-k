@@ -46,7 +46,7 @@ func TestRunSimpleYamlExamples(t *testing.T) {
 
 		t.Run("run yaml Quarkus", func(t *testing.T) {
 			RegisterTestingT(t)
-			Expect(Kamel("run", "-n", ns, "--name", "yaml-quarkus", "../files/yaml.yaml", "-t", "quarkus.enabled=true").Execute()).Should(BeNil())
+			Expect(Kamel("run", "-n", ns, "--name", "yaml-quarkus", "files/yaml.yaml", "-t", "quarkus.enabled=true").Execute()).Should(BeNil())
 			Eventually(IntegrationPodPhase(ns, "yaml-quarkus"), TestTimeoutMedium).Should(Equal(v1.PodRunning))
 			Eventually(IntegrationCondition(ns, "yaml-quarkus", camelv1.IntegrationConditionReady), TestTimeoutShort).Should(Equal(v1.ConditionTrue))
 			Eventually(IntegrationLogs(ns, "yaml-quarkus"), TestTimeoutShort).Should(ContainSubstring("powered by Quarkus"))

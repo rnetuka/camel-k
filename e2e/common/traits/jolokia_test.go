@@ -37,7 +37,7 @@ func TestJolokiaTrait(t *testing.T) {
 		Expect(Kamel("install", "-n", ns).Execute()).Should(BeNil())
 
 		t.Run("Run Java with Jolokia", func(t *testing.T) {
-			Expect(Kamel("run", "-n", ns, "../files/Java.java",
+			Expect(Kamel("run", "-n", ns, "files/java.java",
 				"-t", "jolokia.enabled=true",
 				"-t", "jolokia.use-ssl-client-authentication=false",
 				"-t", "jolokia.protocol=http",

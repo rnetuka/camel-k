@@ -37,7 +37,7 @@ func TestRunSimpleXmlExamples(t *testing.T) {
 
 		t.Run("run xml", func(t *testing.T) {
 			RegisterTestingT(t)
-			Expect(Kamel("run", "-n", ns, "../files/xml.xml").Execute()).Should(BeNil())
+			Expect(Kamel("run", "-n", ns, "files/xml.xml").Execute()).Should(BeNil())
 			Eventually(IntegrationPodPhase(ns, "xml"), TestTimeoutMedium).Should(Equal(v1.PodRunning))
 			Eventually(IntegrationCondition(ns, "xml", camelv1.IntegrationConditionReady), TestTimeoutShort).Should(Equal(v1.ConditionTrue))
 			Eventually(IntegrationLogs(ns, "xml"), TestTimeoutShort).Should(ContainSubstring("Magicstring!"))
