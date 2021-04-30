@@ -23,7 +23,7 @@ if [ "$#" -ge 1 ]; then
   shift 1
   mvn -q \
     -f ${rootdir}/build/maven/pom-catalog.xml \
-    -Dskip.enforcer=true \
+    -Denforcer.skip=true \
     -Dcatalog.path=${rootdir}/deploy \
     -Druntime.version=$runtimeVersion \
     -B \
