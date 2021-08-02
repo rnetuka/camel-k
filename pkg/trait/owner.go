@@ -78,17 +78,22 @@ func (t *ownerTrait) Apply(e *Environment) error {
 	}
 
 	e.Resources.VisitMetaObject(func(res metav1.Object) {
-		references := []metav1.OwnerReference{
-			{
-				APIVersion:         e.Integration.APIVersion,
-				Kind:               e.Integration.Kind,
-				Name:               e.Integration.Name,
-				UID:                e.Integration.UID,
-				Controller:         &controller,
-				BlockOwnerDeletion: &blockOwnerDeletion,
-			},
+		// Cross-namespace references are forbidden and also asynchronously refused
+		// by the api server (sometimes no error is thrown but the resource is not created).
+		// Ref: https://github.com/kubernetes/kubernetes/issues/65200
+		if res.GetNamespace() == "" || res.GetNamespace() == e.Integration.Namespace {
+			references := []metav1.OwnerReference{
+				{
+					APIVersion:         e.Integration.APIVersion,
+					Kind:               e.Integration.Kind,
+					Name:               e.Integration.Name,
+					UID:                e.Integration.UID,
+					Controller:         &controller,
+					BlockOwnerDeletion: &blockOwnerDeletion,
+				},
+			}
+			res.SetOwnerReferences(references)
 		}
-		res.SetOwnerReferences(references)
 
 		// Transfer annotations
 		t.propagateLabelAndAnnotations(res, targetLabels, targetAnnotations)
