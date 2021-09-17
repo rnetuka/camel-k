@@ -32,7 +32,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime/pkg/client"
 
 	eventing "knative.dev/eventing/pkg/apis/eventing/v1beta1"
-	messaging "knative.dev/eventing/pkg/apis/messaging/v1beta1"
+	messagingv1 "knative.dev/eventing/pkg/apis/messaging/v1"
 	sources "knative.dev/eventing/pkg/apis/sources/v1alpha2"
 	"knative.dev/pkg/apis/duck"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
@@ -45,17 +45,17 @@ import (
 )
 
 // CreateSubscription ---
-func CreateSubscription(channelReference corev1.ObjectReference, serviceName string, path string) *messaging.Subscription {
-	return &messaging.Subscription{
+func CreateSubscription(channelReference corev1.ObjectReference, serviceName string, path string) *messagingv1.Subscription {
+	return &messagingv1.Subscription{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: messaging.SchemeGroupVersion.String(),
+			APIVersion: messagingv1.SchemeGroupVersion.String(),
 			Kind:       "Subscription",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: channelReference.Namespace,
 			Name:      channelReference.Name + "-" + serviceName,
 		},
-		Spec: messaging.SubscriptionSpec{
+		Spec: messagingv1.SubscriptionSpec{
 			Channel: corev1.ObjectReference{
 				APIVersion: channelReference.GroupVersionKind().GroupVersion().String(),
 				Kind:       channelReference.Kind,
