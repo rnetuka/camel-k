@@ -31,12 +31,11 @@ import (
 
 	ctrl "sigs.k8s.io/controller-runtime/pkg/client"
 
-	eventing "knative.dev/eventing/pkg/apis/eventing/v1beta1"
-	messagingv1 "knative.dev/eventing/pkg/apis/messaging/v1"
-	sources "knative.dev/eventing/pkg/apis/sources/v1alpha2"
+	eventing "knative.dev/eventing/pkg/apis/eventing/v1"
+	messaging "knative.dev/eventing/pkg/apis/messaging/v1"
+	sources "knative.dev/eventing/pkg/apis/sources/v1"
 	"knative.dev/pkg/apis/duck"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
-	duckv1alpha1 "knative.dev/pkg/apis/duck/v1alpha1"
 	"knative.dev/pkg/tracker"
 	serving "knative.dev/serving/pkg/apis/serving/v1"
 
@@ -45,17 +44,17 @@ import (
 )
 
 // CreateSubscription ---
-func CreateSubscription(channelReference corev1.ObjectReference, serviceName string, path string) *messagingv1.Subscription {
-	return &messagingv1.Subscription{
+func CreateSubscription(channelReference corev1.ObjectReference, serviceName string, path string) *messaging.Subscription {
+	return &messaging.Subscription{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: messagingv1.SchemeGroupVersion.String(),
+			APIVersion: messaging.SchemeGroupVersion.String(),
 			Kind:       "Subscription",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: channelReference.Namespace,
 			Name:      channelReference.Name + "-" + serviceName,
 		},
-		Spec: messagingv1.SubscriptionSpec{
+		Spec: messaging.SubscriptionSpec{
 			Channel: corev1.ObjectReference{
 				APIVersion: channelReference.GroupVersionKind().GroupVersion().String(),
 				Kind:       channelReference.Kind,
@@ -125,7 +124,7 @@ func CreateSinkBinding(source corev1.ObjectReference, target corev1.ObjectRefere
 			Name:      source.Name,
 		},
 		Spec: sources.SinkBindingSpec{
-			BindingSpec: duckv1alpha1.BindingSpec{
+			BindingSpec: duckv1.BindingSpec{
 				Subject: tracker.Reference{
 					APIVersion: source.APIVersion,
 					Kind:       source.Kind,

@@ -28,7 +28,7 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 
-	messaging "knative.dev/eventing/pkg/apis/messaging/v1beta1"
+	messaging "knative.dev/eventing/pkg/apis/messaging/v1"
 
 	. "github.com/apache/camel-k/e2e/support"
 	camelv1 "github.com/apache/camel-k/pkg/apis/camel/v1"

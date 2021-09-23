@@ -52,8 +52,8 @@ import (
 
 	ctrl "sigs.k8s.io/controller-runtime/pkg/client"
 
-	eventing "knative.dev/eventing/pkg/apis/eventing/v1beta1"
-	messaging "knative.dev/eventing/pkg/apis/messaging/v1beta1"
+	eventing "knative.dev/eventing/pkg/apis/eventing/v1"
+	messaging "knative.dev/eventing/pkg/apis/messaging/v1"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
 	projectv1 "github.com/openshift/api/project/v1"
@@ -703,14 +703,14 @@ func KnativeService(ns string, name string) func() *servingv1.Service {
 	}
 }
 
-func CKClusterServiceVersion(conditions func(v1alpha12.ClusterServiceVersion) bool ,ns string) func() *v1alpha12.ClusterServiceVersion {
+func CKClusterServiceVersion(conditions func(v1alpha12.ClusterServiceVersion) bool, ns string) func() *v1alpha12.ClusterServiceVersion {
 	return func() *v1alpha12.ClusterServiceVersion {
 		lst := v1alpha12.ClusterServiceVersionList{}
 		if err := TestClient().List(TestContext, &lst, ctrl.InNamespace(ns)); err != nil {
 			panic(err)
 		}
 		for _, s := range lst.Items {
-			if strings.Contains(s.Name, "camel-k") && conditions(s){
+			if strings.Contains(s.Name, "camel-k") && conditions(s) {
 				return &s
 			}
 		}
