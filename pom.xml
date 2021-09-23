@@ -27,7 +27,7 @@
 
     <groupId>org.fuse.camel.k</groupId>
     <artifactId>camel-k-parent</artifactId>
-    <version>1.4.0.fuse-800025</version>
+    <version>1.4.0.fuse-800026</version>
     <packaging>pom</packaging>
 
     <name>Fuse :: Camel-K Parent</name>
