@@ -21,21 +21,24 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/apache/camel-k/pkg/platform"
 	"github.com/pkg/errors"
+
 	k8errors "k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/selection"
 	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	v1 "github.com/apache/camel-k/pkg/apis/camel/v1"
+	"github.com/apache/camel-k/pkg/client"
+	"github.com/apache/camel-k/pkg/platform"
+	"github.com/apache/camel-k/pkg/trait"
 	"github.com/apache/camel-k/pkg/util"
 	"github.com/apache/camel-k/pkg/util/controller"
 	"github.com/apache/camel-k/pkg/util/kubernetes"
 )
 
 // LookupKitForIntegration --
-func LookupKitForIntegration(ctx context.Context, c k8sclient.Reader, integration *v1.Integration) (*v1.IntegrationKit, error) {
+func LookupKitForIntegration(ctx context.Context, c client.Client, integration *v1.Integration) (*v1.IntegrationKit, error) {
 	if integration.Status.IntegrationKit != nil {
 		kit, err := kubernetes.GetIntegrationKit(ctx, c, integration.Status.IntegrationKit.Name, integration.Status.IntegrationKit.Namespace)
 		if err != nil {
@@ -105,7 +108,7 @@ func LookupKitForIntegration(ctx context.Context, c k8sclient.Reader, integratio
 		//
 		// A kit can be used only if it contains a subset of the traits and related configurations
 		// declared on integration.
-		match, err := HasMatchingTraits(&kit, integration)
+		match, err := HasMatchingTraits(ctx, c, &kit, integration)
 		if err != nil {
 			return nil, err
 		}
@@ -121,23 +124,25 @@ func LookupKitForIntegration(ctx context.Context, c k8sclient.Reader, integratio
 }
 
 // HasMatchingTraits compare traits defined on kit against those defined on integration.
-func HasMatchingTraits(kit *v1.IntegrationKit, integration *v1.Integration) (bool, error) {
+func HasMatchingTraits(ctx context.Context, c client.Client, kit *v1.IntegrationKit, integration *v1.Integration) (bool, error) {
+	traits := filterKitTraits(ctx, c, integration.Spec.Traits)
+
 	// The kit has no trait, but the integration need some
-	if len(kit.Spec.Traits) == 0 && len(integration.Spec.Traits) > 0 {
+	if len(kit.Spec.Traits) == 0 && len(traits) > 0 {
 		return false, nil
 	}
 	for name, kitTrait := range kit.Spec.Traits {
-		intTrait, ok := integration.Spec.Traits[name]
+		itTrait, ok := traits[name]
 		if !ok {
 			// skip it because trait configured on kit is not defined on integration
 			return false, nil
 		}
-		data, err := json.Marshal(intTrait.Configuration)
+		data, err := json.Marshal(itTrait.Configuration)
 		if err != nil {
 			return false, err
 		}
-		intConf := make(map[string]interface{})
-		err = json.Unmarshal(data, &intConf)
+		itConf := make(map[string]interface{})
+		err = json.Unmarshal(data, &itConf)
 		if err != nil {
 			return false, err
 		}
@@ -151,7 +156,7 @@ func HasMatchingTraits(kit *v1.IntegrationKit, integration *v1.Integration) (boo
 			return false, err
 		}
 		for ck, cv := range kitConf {
-			iv, ok := intConf[ck]
+			iv, ok := itConf[ck]
 			if !ok {
 				// skip it because trait configured on kit has a value that is not defined
 				// in integration trait
@@ -167,6 +172,24 @@ func HasMatchingTraits(kit *v1.IntegrationKit, integration *v1.Integration) (boo
 
 	return true, nil
 }
+
+func filterKitTraits(ctx context.Context, c client.Client, in map[string]v1.TraitSpec) map[string]v1.TraitSpec {
+	if len(in) == 0 {
+		return in
+	}
+	catalog := trait.NewCatalog(ctx, c)
+	out := make(map[string]v1.TraitSpec)
+	for name, conf := range in {
+		t := catalog.GetTrait(name)
+		if t != nil && !t.InfluencesKit() {
+			// We don't store the trait configuration if the trait cannot influence the kit behavior
+			continue
+		}
+		out[name] = conf
+	}
+	return out
+}
+
 
 // We need to try to perform a slice equality in order to prevent a runtime panic
 func equal(a, b interface{}) bool {
