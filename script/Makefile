@@ -45,13 +45,13 @@ KAMELET_CATALOG_REPO_BRANCH := v0.4.0
 PACKAGE_ARTIFACTS_STRATEGY := copy
 
 # OLM (Operator Lifecycle Manager and Operator Hub): uncomment to override operator settings at build time
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultOperatorName=camel-k-operator
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultPackage=camel-k
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultChannel=alpha
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultSource=community-operators
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultSourceNamespace=openshift-marketplace
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultStartingCSV=
-#GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultGlobalNamespace=openshift-operators
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/cmd.VersionVariant=RedHat
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/install.KamelCLIDownloadURLTemplate=https://mirror.openshift.com/pub/openshift-v4/clients/camel-k/%s/camel-k-client-%s-%s-64bit.tar.gz
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultOperatorName=red-hat-camel-k-operator
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultPackage=red-hat-camel-k
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultChannel=1.4.x
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/olm.DefaultSource=redhat-operators
+GOLDFLAGS += -X github.com/apache/camel-k/pkg/util/maven.DefaultMavenRepositories=https://maven.repository.redhat.com/ga@id=redhat.ga,https://repository.jboss.org/nexus/content/groups/ea@id=jboss.ea,https://repo.maven.apache.org/maven2@id=central
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
